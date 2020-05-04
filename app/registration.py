@@ -5,6 +5,7 @@ from flask_restplus import Api
 
 from app.namespaces import ErrorNs
 from app.texts.namespaces import TextNamespace
+from app.auth.namespaces import AuthNamespace
 
 
 def register(app: Flask) -> None:
@@ -33,4 +34,5 @@ def create_api(blueprint: Blueprint) -> None:
               description='Web Service for Text Tagging')
 
     api.add_namespace(TextNamespace.ns)
+    api.add_namespace(AuthNamespace.ns)
     api.add_namespace(ErrorNs.ns)

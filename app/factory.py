@@ -15,7 +15,6 @@ def create_app(app_config: object = Config()) -> Flask:
     app.config.from_object(app_config)
 
     # DB app initialization
-    from app import models
     db.init_app(app)
 
     # API registration
