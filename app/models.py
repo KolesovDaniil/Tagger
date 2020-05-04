@@ -7,13 +7,14 @@ from flask_login import UserMixin
 from app.database import db
 
 
-class User(UserMixin, db.Model):
+class User(db.Model, UserMixin):
     """Пользователь"""
 
     __tablename__ = 'user'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String, nullable=False)
+    username = db.Column(db.String, nullable=False, unique=True)
+    email = db.Column(db.String, nullable=False)
     password_hash = db.Column(db.String, nullable=False, unique=True)
 
     texts = db.relationship('Text', back_populates='owner')

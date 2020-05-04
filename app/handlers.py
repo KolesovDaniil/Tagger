@@ -2,7 +2,7 @@
 
 from http import HTTPStatus
 
-from app.exceptions import NotFoundError, UnauthorizedError
+from app.exceptions import NotFoundError, UnauthorizedError, ValidationError
 from app.namespaces import ErrorNs
 from app.login import login
 
@@ -22,3 +22,11 @@ def unauthorized_error_handler(e):
     """Обработчик для ошибки UnauthorizedError"""
 
     return {'message': e}, HTTPStatus.UNAUTHORIZED
+
+
+@ErrorNs.ns.errorhandler(ValidationError)
+@ErrorNs.ns.marshal_with(ErrorNs.error_model, code=HTTPStatus.CONFLICT)
+def validation_error_handler(e):
+    """Обработчик для ошибки ValidationError"""
+
+    return {'message': e}, HTTPStatus.CONFLICT
