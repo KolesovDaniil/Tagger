@@ -1,10 +1,10 @@
-""""""
+"""Text Namespace"""
 
 from flask_restplus import Namespace, fields, reqparse
 
 
 class TextNamespace:
-    """"""
+    """Text Namespace class"""
 
     ns = Namespace('texts')
 
@@ -20,14 +20,20 @@ class TextNamespace:
     get_text_all_model = ns.model('GetTextAllModel',
                                   {'texts': fields.List(fields.Nested(get_text_model))})
 
-    post_expect_model = ns.model('PostExpectModel',
+    add_expect_model = ns.model('PostExpectModel',
+                                {'text': fields.String(required=True)})
+
+    add_response_model = ns.model('PostResponseModel',
+                                  {'id': fields.Integer()})
+
+    update_expect_model = ns.model('PatchExpectModel',
+                                   {'text': fields.String()})
+
+    tags_expect_model = ns.model('TagsExpectModel',
                                  {'text': fields.String(required=True)})
 
-    post_response_model = ns.model('PostResponseModel',
-                                   {'id': fields.Integer()})
-
-    patch_expect_model = ns.model('PatchExpectModel',
-                                  {'text': fields.String()})
+    tags_response_model = ns.model('TagsResponseModel',
+                                   {'tags': fields.List(fields.String())})
 
     # Parsers
     texts_parser = reqparse.RequestParser()

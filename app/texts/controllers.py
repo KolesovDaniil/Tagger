@@ -22,12 +22,12 @@ class TextAll(Resource):
 
         return views.get_texts(params), HTTPStatus.OK
 
-    @TextNamespace.ns.expect(TextNamespace.post_expect_model)
+    @TextNamespace.ns.expect(TextNamespace.add_expect_model)
     @TextNamespace.ns.response(HTTPStatus.CREATED, HTTPStatus.CREATED.phrase,
-                               model=TextNamespace.post_response_model)
+                               model=TextNamespace.add_response_model)
     @TextNamespace.ns.response(HTTPStatus.BAD_REQUEST, HTTPStatus.BAD_REQUEST.phrase,
                                model=ErrorNs.error_model)
-    @TextNamespace.ns.marshal_with(fields=TextNamespace.post_response_model)
+    @TextNamespace.ns.marshal_with(fields=TextNamespace.add_response_model)
     def post(self):
         """Add new text"""
 
@@ -51,7 +51,7 @@ class TextById(Resource):
 
         return views.get_text(id), HTTPStatus.OK
 
-    @TextNamespace.ns.expect(TextNamespace.patch_expect_model)
+    @TextNamespace.ns.expect(TextNamespace.update_expect_model)
     @TextNamespace.ns.response(HTTPStatus.NO_CONTENT, HTTPStatus.NO_CONTENT.phrase)
     @TextNamespace.ns.response(HTTPStatus.BAD_REQUEST, HTTPStatus.BAD_REQUEST.phrase,
                                model=ErrorNs.error_model)
@@ -73,3 +73,18 @@ class TextById(Resource):
         views.delete_text(id)
 
         return {}, HTTPStatus.NO_CONTENT
+
+
+@TextNamespace.ns.route('/tags',
+                        doc={'description': 'Get tags without Log In and saving text'})
+class TextTags(Resource):
+    @TextNamespace.ns.expect(TextNamespace.tags_expect_model)
+    @TextNamespace.ns.response(HTTPStatus.OK, HTTPStatus.OK.phrase,
+                               model=TextNamespace.tags_response_model)
+    @TextNamespace.ns.marshal_with(fields=TextNamespace.tags_response_model)
+    def get(self):
+        """Get tags"""
+
+        text = TextNamespace.ns.payload['text']
+
+        return {'tags': views.get_tags(text)}, HTTPStatus.OK

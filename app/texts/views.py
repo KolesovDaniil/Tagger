@@ -25,7 +25,7 @@ def add_text(payload: Dict) -> Text:
     """Add new text"""
 
     _check_anonymity()
-    tags_string = ','.join(_get_tags(payload['text']))
+    tags_string = ','.join(get_tags(payload['text']))
 
     new_text = Text(text=payload['text'],
                     creation_dt=datetime.now(),
@@ -55,7 +55,7 @@ def update_text(text_id: int, payload: Dict) -> None:
     query = db.session.query(Text).filter(Text.id == text_id)
 
     try:
-        new_tags_string = ''.join(_get_tags(payload['text']))
+        new_tags_string = ''.join(get_tags(payload['text']))
         new_data = {'text': payload['text'],
                     'tags': new_tags_string,
                     'last_update_dt': datetime.now()}
@@ -87,8 +87,8 @@ def check_text_existing(text_id: int) -> None:
         raise NotFoundError(f'texts/{text_id}')
 
 
-def _get_tags(text: str) -> List[str]:
-    """"""
+def get_tags(text: str) -> List[str]:
+    """Get text key words"""
 
     rake_obj = RAKE.Rake(STOP_WORDS_DIR)
     keywords_dict = rake_obj.run(text, maxWords=2, minCharacters=2)
@@ -103,7 +103,6 @@ def _get_tags(text: str) -> List[str]:
 def _filters(params: Dict) -> List[Text]:
     """Filter texts by query params"""
 
-    print(current_user.username)
     query = db.session.query(Text)
 
     if params['creationDateFrom']:
@@ -129,7 +128,7 @@ def _filters(params: Dict) -> List[Text]:
 
 
 def _check_anonymity():
-    """"""
+    """Check that current user is not anonymous"""
 
     if current_user.is_anonymous:
         raise UnauthorizedError('Please Log In')
