@@ -82,7 +82,7 @@ class TextTags(Resource):
     @TextNamespace.ns.response(HTTPStatus.OK, HTTPStatus.OK.phrase,
                                model=TextNamespace.tags_response_model)
     @TextNamespace.ns.marshal_with(fields=TextNamespace.tags_response_model)
-    def get(self):
+    def post(self):
         """Get tags"""
 
         text = TextNamespace.ns.payload['text']
