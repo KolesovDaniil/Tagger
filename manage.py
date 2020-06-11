@@ -8,10 +8,10 @@ from app.login import login
 
 
 app = create_app()
+app.secret_key = 'the random string'
 migrate = Migrate(app, db)
 login.init_app(app)
 
 
 if __name__ == '__main__':
-    app.secret_key = 'super secret key'
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=6060)

@@ -3,13 +3,18 @@ from typing import List, Dict
 from datetime import datetime
 from functools import reduce
 
+from pymystem3 import Mystem
 import RAKE
 from flask_login import current_user
+from langdetect import detect
 
 from app.database import db
 from app.exceptions import NotFoundError, UnauthorizedError
 from app.models import Text
-from app.config import STOP_WORDS_DIR
+from app.config import STOP_WORDS_DIR_ENG, STOP_WORDS_DIR_RU
+
+
+RU_STOP_WORDS_DIR = '/'
 
 
 def get_texts(query_params: Dict) -> Dict[str, List[Text]]:
@@ -89,13 +94,29 @@ def check_text_existing(text_id: int) -> None:
 
 def get_tags(text: str) -> List[str]:
     """Get text key words"""
+    language = detect(text)
+    original_text = text
+    normalize_text = None
+    keywords_dict = None
+    rake_obj = None
 
-    rake_obj = RAKE.Rake(STOP_WORDS_DIR)
-    keywords_dict = rake_obj.run(text, maxWords=2, minCharacters=2)
+    if language == 'ru':
+        rake_obj = RAKE.Rake(STOP_WORDS_DIR_RU)
+        m = Mystem()
+        normalize_text = ''.join(m.lemmatize(original_text))
 
-    mean_rate = reduce(lambda item1, item2: item1 + item2[1], keywords_dict, 0) / len(keywords_dict)
+    if language == 'en':
+        rake_obj = RAKE.Rake(STOP_WORDS_DIR_ENG)
 
-    keywords = [item[0] for item in keywords_dict if item[1] >= mean_rate]
+    if rake_obj is not None:
+        keywords_dict = rake_obj.run(normalize_text, maxWords=2, minCharacters=2)
+    keywords = []
+    if keywords_dict:
+        mean_rate = reduce(
+            lambda item1, item2: item1 + item2[1], keywords_dict, 0
+        ) / len(keywords_dict)
+
+        keywords = [item[0] for item in keywords_dict if item[1] >= mean_rate]
 
     return keywords
 

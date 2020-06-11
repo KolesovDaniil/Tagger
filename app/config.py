@@ -3,7 +3,8 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STOP_WORDS_DIR = os.path.join(BASE_DIR, 'StopWords.txt')
+STOP_WORDS_DIR_ENG = os.path.join(BASE_DIR, 'StopWords.txt')
+STOP_WORDS_DIR_RU = os.path.join(BASE_DIR, 'StopWords_Ru.txt')
 
 
 class Config(object):
